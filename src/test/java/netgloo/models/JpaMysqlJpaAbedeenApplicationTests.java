@@ -1,4 +1,4 @@
-package com.examle.jpa.demo;
+package netgloo.models;
 
 import netgloo.models.UserDaoI;
 import org.junit.Test;
