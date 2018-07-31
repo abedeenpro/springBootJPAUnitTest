@@ -10,88 +10,89 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
 
 /**
- * This class is used to access data for the User entity.
- * Repository annotation allows the component scanning support to find and 
- * configure the DAO wihtout any XML configuration and also provide the Spring 
- * exceptiom translation.
+ * This class is used to access data for the User entity. Repository annotation
+ * allows the component scanning support to find and configure the DAO wihtout
+ * any XML configuration and also provide the Spring exceptiom translation.
  * Since we've setup setPackagesToScan and transaction manager on
  * DatabaseConfig, any bean method annotated with Transactional will cause
- * Spring to magically call begin() and commit() at the start/end of the
- * method. If exception occurs it will also call rollback().
+ * Spring to magically call begin() and commit() at the start/end of the method.
+ * If exception occurs it will also call rollback().
  */
 @Repository
 @Transactional
 public class UserDao implements UserDaoI {
-  
-  // ------------------------
-  // PUBLIC METHODS
-  // ------------------------
-  
-  /**
-   * Save the user in the database.
-   */
-    @Override
-  public void create(User user) {
-    entityManager.persist(user);
-    return;
-  }
-  
-  /**
-   * Delete the user from the database.
-   */
-    @Override
-  public void delete(User user) {
-    if (entityManager.contains(user))
-      entityManager.remove(user);
-    else
-      entityManager.remove(entityManager.merge(user));
-    return;
-  }
-  
-  /**
-   * Return all the users stored in the database.
-   */
-  @SuppressWarnings("unchecked")
-    @Override
-  public List<User> getAll() {
-    return entityManager.createQuery("from User").getResultList();
-  }
-  
-  /**
-   * Return the user having the passed email.
-   */
-    @Override
-  public User getByEmail(String email) {
-    return (User) entityManager.createQuery(
-        "from User where email = :email")
-        .setParameter("email", email)
-        .getSingleResult();
-  }
 
-  /**
-   * Return the user having the passed id.
-   */
+    
+    // ------------------------
+    // PRIVATE FIELDS
+    // ------------------------
+    // An EntityManager will be automatically injected from entityManagerFactory
+    // setup on DatabaseConfig class.
+    @PersistenceContext
+    private EntityManager entityManager;
+    
+    // ------------------------
+    // PUBLIC METHODS
+    // ------------------------
+    /**
+     * Save the user in the database.
+     */
     @Override
-  public User getById(long id) {
-    return entityManager.find(User.class, id);
-  }
+    public void create(User user) {
+        entityManager.persist(user);
+        return;
+    }
 
-  /**
-   * Update the passed user in the database.
-   */
+    /**
+     * Delete the user from the database.
+     */
     @Override
-  public void update(User user) {
-    entityManager.merge(user);
-    return;
-  }
+    public void delete(User user) {
+        if (entityManager.contains(user)) {
+            entityManager.remove(user);
+        } else {
+            entityManager.remove(entityManager.merge(user));
+        }
+        return;
+    }
 
-  // ------------------------
-  // PRIVATE FIELDS
-  // ------------------------
-  
-  // An EntityManager will be automatically injected from entityManagerFactory
-  // setup on DatabaseConfig class.
-  @PersistenceContext
-  private EntityManager entityManager;
-  
+    /**
+     * Return all the users stored in the database.
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<User> getAll() {
+        return entityManager.createQuery("from User").getResultList();
+    }
+
+    /**
+     * Return the user having the passed email.
+     */
+    @Override
+    public User getByEmail(String email) {
+        return (User) entityManager.createQuery(
+                "from User where email = :email")
+                .setParameter("email", email)
+                .getSingleResult();
+    }
+
+    /**
+     * Return the user having the passed id.
+     */
+    @Override
+    public User getById(long id) {
+        return entityManager.find(User.class, id);
+    }
+
+    /**
+     * Update the passed user in the database.
+     */
+    @Override
+    public void update(User user) {
+        entityManager.merge(user);
+        return;
+    }
+
+    
+
 } // class UserDao

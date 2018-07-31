@@ -66,5 +66,13 @@ public class User {
   public void setName(String value) {
     this.name = value;
   }
+
+    @Override
+    public String toString() {
+        return "User{" + "id=" + id + ", email=" + email + ", name=" + name + '}';
+    }
+
+  
+  
   
 } // class User
